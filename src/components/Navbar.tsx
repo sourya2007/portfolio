@@ -19,11 +19,13 @@ export default function Navbar({ showLinks }: NavbarProps) {
             : 'opacity-0 -translate-y-2 pointer-events-none'
         }`}
       >
-        <img
-          src="/The%20Monostroke%20Logo.png"
-          alt="The Monostroke"
-          className="h-8 md:h-10 w-auto object-contain"
-        />
+        <div className="h-10 w-10 rounded-full overflow-hidden border border-white/20 bg-black/30">
+          <img
+            src="/The%20Monostroke%20Logo.png"
+            alt="The Monostroke"
+            className="h-full w-full object-cover"
+          />
+        </div>
       </div>
       
       <div

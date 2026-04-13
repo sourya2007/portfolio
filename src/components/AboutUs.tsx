@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -20,6 +20,29 @@ export default function AboutUs({ enabled = true }: AboutUsProps) {
   const paragraphRef = useRef<HTMLDivElement>(null);
   const underlineRef = useRef<HTMLSpanElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+
+  const handleCardPointerMove = (event: MouseEvent<HTMLDivElement>) => {
+    const card = event.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const relativeX = (event.clientX - rect.left) / rect.width;
+    const relativeY = (event.clientY - rect.top) / rect.height;
+
+    const rotateY = (relativeX - 0.5) * 14;
+    const rotateX = (0.5 - relativeY) * 14;
+
+    card.style.setProperty('--card-rotate-x', `${rotateX.toFixed(2)}deg`);
+    card.style.setProperty('--card-rotate-y', `${rotateY.toFixed(2)}deg`);
+    card.style.setProperty('--card-glow-x', `${(relativeX * 100).toFixed(2)}%`);
+    card.style.setProperty('--card-glow-y', `${(relativeY * 100).toFixed(2)}%`);
+  };
+
+  const handleCardPointerLeave = (event: MouseEvent<HTMLDivElement>) => {
+    const card = event.currentTarget;
+    card.style.setProperty('--card-rotate-x', '0deg');
+    card.style.setProperty('--card-rotate-y', '0deg');
+    card.style.setProperty('--card-glow-x', '50%');
+    card.style.setProperty('--card-glow-y', '50%');
+  };
 
   const renderAnimatedSegments = (segments: AnimatedTextSegment[], keyPrefix: string): ReactNode => {
     return segments.map((segment, segmentIndex) => {
@@ -206,14 +229,24 @@ export default function AboutUs({ enabled = true }: AboutUsProps) {
           </p>
         </div>
         <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16">
-          <div className="liquid-glass p-8 rounded-2xl">
+          <div
+            className="liquid-glass tilt-neon-card p-8 rounded-2xl"
+            onMouseMove={handleCardPointerMove}
+            onMouseLeave={handleCardPointerLeave}
+          >
+            <span className="card-glitter" aria-hidden="true" />
             <h3 className="text-xl font-bold mb-4">Our Philosophy</h3>
             <p className="opacity-70 leading-relaxed">
               Every stroke matters. We believe in the power of minimalism combined with 
               dynamic motion to tell stories that resonate.
             </p>
           </div>
-          <div className="liquid-glass p-8 rounded-2xl">
+          <div
+            className="liquid-glass tilt-neon-card p-8 rounded-2xl"
+            onMouseMove={handleCardPointerMove}
+            onMouseLeave={handleCardPointerLeave}
+          >
+            <span className="card-glitter" aria-hidden="true" />
             <h3 className="text-xl font-bold mb-4">Our Vision</h3>
             <p className="opacity-70 leading-relaxed">
               To redefine the boundaries of digital design, blending 3D aesthetics 
