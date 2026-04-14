@@ -58,7 +58,8 @@ export default function CoreTeam() {
             showUserInfo={false}
             showTitle={false}
             enableTilt={true}
-            enableMobileTilt={false}
+            enableMobileTilt={true}
+            mobileTiltSensitivity={3.2}
             onContactClick={() => console.log(`Contact clicked: ${member.handle}`)}
             behindGlowColor={member.behindGlowColor}
             behindGlowEnabled

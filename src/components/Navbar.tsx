@@ -1,10 +1,31 @@
 import { motion } from 'motion/react';
+import type { MouseEvent } from 'react';
 
 interface NavbarProps {
   showLinks: boolean;
 }
 
 export default function Navbar({ showLinks }: NavbarProps) {
+  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    event.preventDefault();
+    const section = document.getElementById(targetId);
+    if (!section) return;
+
+    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+    const offsetVh = Number(section.getAttribute('data-scroll-offset-vh') ?? '0');
+    const targetTop = sectionTop + (window.innerHeight * offsetVh) / 100;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+    window.scrollTo({
+      top: Math.max(0, Math.min(targetTop, maxScroll)),
+      behavior: 'smooth',
+    });
+
+    if (window.location.hash !== `#${targetId}`) {
+      window.history.replaceState(null, '', `#${targetId}`);
+    }
+  };
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -39,6 +60,7 @@ export default function Navbar({ showLinks }: NavbarProps) {
           <a
             key={item}
             href={`#${item.toLowerCase()}`}
+            onClick={(event) => handleNavClick(event, item.toLowerCase())}
             className="text-sm font-bold uppercase tracking-widest hover:text-accent transition-colors duration-300"
           >
             {item}

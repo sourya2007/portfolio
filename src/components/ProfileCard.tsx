@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)';
@@ -52,6 +52,10 @@ interface ProfileCardProps {
   showUserInfo?: boolean;
   showTitle?: boolean;
   onContactClick?: () => void;
+  cardHeight?: string;
+  cardMaxHeight?: string;
+  mobileCardHeight?: string;
+  mobileCardMaxHeight?: string;
 }
 
 interface TiltEngine {
@@ -86,6 +90,10 @@ function ProfileCardComponent({
   showUserInfo = true,
   showTitle = true,
   onContactClick,
+  cardHeight = '80svh',
+  cardMaxHeight = '520px',
+  mobileCardHeight = '80svh',
+  mobileCardMaxHeight = '520px',
 }: ProfileCardProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
@@ -96,6 +104,22 @@ function ProfileCardComponent({
 
   const enterTimerRef = useRef<number | null>(null);
   const leaveRafRef = useRef<number | null>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+
+    const updateViewport = () => {
+      setIsMobileViewport(mediaQuery.matches);
+    };
+
+    updateViewport();
+
+    mediaQuery.addEventListener('change', updateViewport);
+    return () => {
+      mediaQuery.removeEventListener('change', updateViewport);
+    };
+  }, []);
 
   const tiltEngine = useMemo<TiltEngine | null>(() => {
     if (!enableTilt) return null;
@@ -427,7 +451,7 @@ function ProfileCardComponent({
     shell.addEventListener('pointerleave', pointerLeaveHandler);
 
     const handleClick = (): void => {
-      if (!enableMobileTilt || window.location.protocol !== 'https:') return;
+      if (!enableMobileTilt) return;
       const anyMotion = window.DeviceMotionEvent as typeof DeviceMotionEvent & {
         requestPermission?: () => Promise<string>;
       };
@@ -528,8 +552,8 @@ function ProfileCardComponent({
         <section
           className="grid relative overflow-hidden"
           style={{
-            height: '80svh',
-            maxHeight: '520px',
+            height: isMobileViewport ? mobileCardHeight : cardHeight,
+            maxHeight: isMobileViewport ? mobileCardMaxHeight : cardMaxHeight,
             aspectRatio: '0.718',
             borderRadius: cardRadius,
             boxShadow:

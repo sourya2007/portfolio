@@ -66,7 +66,7 @@ export default function Projects() {
 
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-8 text-left">
         <div>
           <h2 className="text-accent text-sm font-bold tracking-[0.3em] uppercase mb-4">
             Selected Works
